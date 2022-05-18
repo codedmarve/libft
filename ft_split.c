@@ -17,6 +17,8 @@ int	count_words(char const	*s, char c)
 	int	count;
 	int	i;
 
+	if (!s)
+		return (0);
 	i = 0;
 	count = 0;
 	while (s[i] != '\0')
