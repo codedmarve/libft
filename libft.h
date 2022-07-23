@@ -15,6 +15,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stddef.h>
+# include <stdarg.h>
 
 typedef struct s_list
 {
@@ -66,5 +67,18 @@ void		ft_lstdelone(t_list *lst, void (*del)(void*));
 void		ft_lstclear(t_list **lst, void (*del)(void*));
 void		ft_lstiter(t_list *lst, void (*f)(void *));
 t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+
+//ft_printf...
+int			ft_printf(const char *format, ...);
+int			ft_print_s(va_list args);
+int			ft_print_c(va_list args);
+int			ft_print_i(va_list args);
+int			ft_print_u(va_list args);
+int			ft_print_x(va_list args, char c);
+int			ft_print_p(va_list args);
+int			ft_chexi(int tmp);
+char		*ft_utoa(unsigned int n);
+char		*ft_puthexi(unsigned int n, char c);
+char		*ft_putadd(unsigned long n);
 
 #endif
