@@ -20,7 +20,7 @@ SRC			= 		ft_calloc.c       ft_isdigit.c  ft_memcmp.c      ft_putchar_fd.c  ft_s
 					ft_bzero.c        ft_isascii.c  ft_memchr.c      ft_memset.c      ft_putstr_fd.c  \
 					ft_striteri.c     ft_strlen.c   ft_strrchr.c     ft_memmove.c	  ft_utoa.c  \
 					ft_puthexi.c	  ft_hexi.c 	ft_printf.c		 ft_put.c 		  ft_putadd.c  \
-					get_next_line.c   get_next_line_utils.c  \
+					get_next_line.c   ft_strcpy.c	ft_strcat.c  \
 
 OBJ			=		$(SRC:.c=.o)
 

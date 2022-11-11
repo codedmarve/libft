@@ -88,11 +88,11 @@ char		*ft_putadd(unsigned long n);
 #  define BUFFER_SIZE 42
 # endif
 
+# define MAX_LINE 10100
+# define MAX_FD   1024
+
 char		*get_next_line(int fd);
+void		ft_strcat(char *dst, const char *src);
 char		*ft_strcpy(char *dest, const char *src);
-char		*ft_substr(char const *s, unsigned int start, size_t i);
-char		*ft_strchr(const char *s, int c);
-size_t		ft_strlen(const char *str);
-char		*ft_strdup(const char *s1);
 
 #endif

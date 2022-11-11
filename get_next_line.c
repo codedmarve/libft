@@ -12,101 +12,55 @@
 
 #include "libft.h"
 
-void	bufcpy(char *buffer)
+int	find_line(char **ret_line, char buff_store[], int *rd_bytes)
 {
-	char	cpy[BUFFER_SIZE + 1];
+	char	*linepos;
 	int		i;
 
-	cpy[BUFFER_SIZE] = 0;
-	i = 0;
-	while (i < BUFFER_SIZE)
-		cpy[i++] = '\0';
-	ft_strcpy(cpy, buffer);
-	i = 0;
-	while (buffer[i] != '\0' && buffer[i] != '\n')
-		i++;
-	if (i == BUFFER_SIZE && buffer[i] == 0)
-		buffer[0] = 0;
-	else
-		ft_strcpy(buffer, &cpy[i + 1]);
-	return ;
-}
-
-char	*put_line(char *str, int bytes)
-{
-	char	*line;
-	int		i;
-
-	if (!str)
-		return (NULL);
-	if (!bytes && !ft_strchr(str, '\n'))
-		return (str);
-	i = 0;
-	while (str[i] != '\n')
-		i++;
-	line = ft_substr(str, 0, i + 1);
-	free(str);
-	return (line);
-}
-
-char	*join(char *str, char *buffer)
-{
-	char	*s;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	s = malloc(ft_strlen(str) + ft_strlen(buffer) + 1);
-	if (s == 0)
-		return (NULL);
-	if (str)
+	i = -1;
+	linepos = ft_strchr(buff_store, '\n');
+	if (linepos)
 	{
-		while (str[i])
-		{
-			s[i] = str[i];
-			i++;
-		}
-		free(str);
+		*ret_line = ft_calloc(sizeof(char), (linepos - buff_store) + 2);
+		ft_memcpy(*ret_line, buff_store, linepos - buff_store + 1);
+		while (linepos[++i + 1] != '\0')
+			buff_store[i] = linepos[i + 1];
+		ft_bzero(&buff_store[i], MAX_LINE - i);
+		return (1);
 	}
-	while (buffer[j])
-		s[i++] = buffer[j++];
-	s[i] = '\0';
-	return (s);
-}
-
-char	*refresh(char *str, char *buffer)
-{
-	char	*new;
-
-	if (!str)
-		new = join(0, buffer);
-	else
-		new = join(str, buffer);
-	return (new);
+	if (*rd_bytes == 0)
+	{
+		*ret_line = ft_calloc(sizeof(char), MAX_LINE + 1);
+		ft_memcpy(*ret_line, buff_store, MAX_LINE);
+		*rd_bytes = -1;
+	}
+	return (0);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	buffer[1024][BUFFER_SIZE + 1];
-	char		*str;
-	int			bytes;
+	static char	buff_store[MAX_LINE];
+	char		*temp_storage;
+	char		*ret_line;
+	int			rd_bytes;
 
-	str = NULL;
-	if (BUFFER_SIZE <= 0 || fd < 0)
+	if (fd < 0 || fd > MAX_FD || BUFFER_SIZE <= 0 || BUFFER_SIZE > MAX_LINE)
 		return (NULL);
-	if (buffer[fd][0])
-		str = ft_strdup(buffer[fd]);
-	buffer[fd][BUFFER_SIZE] = '\0';
-	while (!ft_strchr(str, '\n'))
+	temp_storage = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
+	rd_bytes = read(fd, temp_storage, BUFFER_SIZE);
+	ft_strcat(buff_store, temp_storage);
+	free(temp_storage);
+	if (rd_bytes < 0 || (rd_bytes <= 0 && buff_store[0] == '\0'))
 	{
-		bytes = read(fd, buffer[fd], BUFFER_SIZE);
-		if (!bytes || bytes == -1)
-			break ;
-		if (bytes < BUFFER_SIZE)
-			buffer[fd][bytes] = '\0';
-		str = refresh(str, buffer[fd]);
+		ft_bzero(buff_store, MAX_LINE);
+		return (NULL);
 	}
-	bufcpy(buffer[fd]);
-	return (put_line(str, bytes));
+	if (find_line (&ret_line, buff_store, &rd_bytes) == 1)
+		return (ret_line);
+	if (rd_bytes == -1)
+	{
+		ft_bzero(buff_store, MAX_LINE);
+		return (ret_line);
+	}
+	return (get_next_line(fd));
 }
